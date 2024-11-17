@@ -2,429 +2,426 @@ local BossKillTracker = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceConso
 
 -- Localized database table
 local db
-local activeEncounters = {} -- Table to track active encounters by name or encounterID
-
 -- Table of manually tracked bosses for older content
 local trackedBosses = {
     -- Ragefire Chasm
-    ["Oggleflint"] = true, -- Ragefire Chasm
-    ["Taragaman the Hungerer"] = true, -- Ragefire Chasm
-    ["Jergosh the Invoker"] = true, -- Ragefire Chasm
-    ["Bazzalan"] = true, -- Ragefire Chasm
+    ["oggleflint"] = true, -- Ragefire Chasm
+    ["taragaman the hungerer"] = true, -- Ragefire Chasm
+    ["jergosh the invoker"] = true, -- Ragefire Chasm
+    ["bazzalan"] = true, -- Ragefire Chasm
 
     -- The Deadmines
-    ["Rhahk'Zor"] = true, -- The Deadmines
-    ["Sneed"] = true, -- The Deadmines
-    ["Gilnid"] = true, -- The Deadmines
-    ["Mr. Smite"] = true, -- The Deadmines
-    ["Captain Greenskin"] = true, -- The Deadmines
-    ["Edwin VanCleef"] = true, -- The Deadmines
-    ["Cookie"] = true, -- The Deadmines
+    ["rhahk'zor"] = true, -- The Deadmines
+    ["sneed"] = true, -- The Deadmines
+    ["gilnid"] = true, -- The Deadmines
+    ["mr. smite"] = true, -- The Deadmines
+    ["captain greenskin"] = true, -- The Deadmines
+    ["edwin vancleef"] = true, -- The Deadmines
+    ["cookie"] = true, -- The Deadmines
 
     -- Wailing Caverns
-    ["Lady Anacondra"] = true, -- Wailing Caverns
-    ["Lord Cobrahn"] = true, -- Wailing Caverns
-    ["Kresh"] = true, -- Wailing Caverns
-    ["Lord Pythas"] = true, -- Wailing Caverns
-    ["Skum"] = true, -- Wailing Caverns
-    ["Lord Serpentis"] = true, -- Wailing Caverns
-    ["Verdan the Everliving"] = true, -- Wailing Caverns
-    ["Mutanus the Devourer"] = true, -- Wailing Caverns
+    ["lady anacondra"] = true, -- Wailing Caverns
+    ["lord cobrahn"] = true, -- Wailing Caverns
+    ["kresh"] = true, -- Wailing Caverns
+    ["lord pythas"] = true, -- Wailing Caverns
+    ["skum"] = true, -- Wailing Caverns
+    ["lord serpentis"] = true, -- Wailing Caverns
+    ["verdan the everliving"] = true, -- Wailing Caverns
+    ["mutanus the devourer"] = true, -- Wailing Caverns
 
     -- Shadowfang Keep
-    ["Rethilgore"] = true, -- Shadowfang Keep
-    ["Razorclaw the Butcher"] = true, -- Shadowfang Keep
-    ["Baron Silverlaine"] = true, -- Shadowfang Keep
-    ["Commander Springvale"] = true, -- Shadowfang Keep
-    ["Odo the Blindwatcher"] = true, -- Shadowfang Keep
-    ["Fenrus the Devourer"] = true, -- Shadowfang Keep
-    ["Arugal's Voidwalker"] = true, -- Shadowfang Keep
-    ["Wolf Master Nandos"] = true, -- Shadowfang Keep
-    ["Archmage Arugal"] = true, -- Shadowfang Keep
+    ["rethilgore"] = true, -- Shadowfang Keep
+    ["razorclaw the butcher"] = true, -- Shadowfang Keep
+    ["baron silverlaine"] = true, -- Shadowfang Keep
+    ["commander springvale"] = true, -- Shadowfang Keep
+    ["odo the blindwatcher"] = true, -- Shadowfang Keep
+    ["fenrus the devourer"] = true, -- Shadowfang Keep
+    ["arugal's voidwalker"] = true, -- Shadowfang Keep
+    ["wolf master nandos"] = true, -- Shadowfang Keep
+    ["archmage arugal"] = true, -- Shadowfang Keep
 
     -- Blackfathom Deeps
-    ["Ghamoo-ra"] = true, -- Blackfathom Deeps
-    ["Lady Sarevess"] = true, -- Blackfathom Deeps
-    ["Gelihast"] = true, -- Blackfathom Deeps
-    ["Lorgus Jett"] = true, -- Blackfathom Deeps
-    ["Baron Aquanis"] = true, -- Blackfathom Deeps
-    ["Twilight Lord Kelris"] = true, -- Blackfathom Deeps
-    ["Aku'mai"] = true, -- Blackfathom Deeps
+    ["ghamoo-ra"] = true, -- Blackfathom Deeps
+    ["lady sarevess"] = true, -- Blackfathom Deeps
+    ["gelihast"] = true, -- Blackfathom Deeps
+    ["lorgus jett"] = true, -- Blackfathom Deeps
+    ["baron aquanis"] = true, -- Blackfathom Deeps
+    ["twilight lord kelris"] = true, -- Blackfathom Deeps
+    ["aku'mai"] = true, -- Blackfathom Deeps
 
     -- The Stockade
-    ["Targorr the Dread"] = true, -- The Stockade
-    ["Kam Deepfury"] = true, -- The Stockade
-    ["Hamhock"] = true, -- The Stockade
-    ["Bazil Thredd"] = true, -- The Stockade
-    ["Dextren Ward"] = true, -- The Stockade
-    ["Bruegal Ironknuckle"] = true, -- The Stockade
+    ["targorr the dread"] = true, -- The Stockade
+    ["kam deepfury"] = true, -- The Stockade
+    ["hamhock"] = true, -- The Stockade
+    ["bazil thredd"] = true, -- The Stockade
+    ["dextren ward"] = true, -- The Stockade
+    ["bruegal ironknuckle"] = true, -- The Stockade
 
     -- Gnomeregan
-    ["Grubbis"] = true, -- Gnomeregan
-    ["Viscous Fallout"] = true, -- Gnomeregan
-    ["Electrocutioner 6000"] = true, -- Gnomeregan
-    ["Crowd Pummeler 9-60"] = true, -- Gnomeregan
-    ["Dark Iron Ambassador"] = true, -- Gnomeregan
-    ["Mekgineer Thermaplugg"] = true, -- Gnomeregan
+    ["grubbis"] = true, -- Gnomeregan
+    ["viscous fallout"] = true, -- Gnomeregan
+    ["electrocutioner 6000"] = true, -- Gnomeregan
+    ["crowd pummeler 9-60"] = true, -- Gnomeregan
+    ["dark iron ambassador"] = true, -- Gnomeregan
+    ["mekgineer thermaplugg"] = true, -- Gnomeregan
 
     -- Razorfen Kraul
-    ["Roogug"] = true, -- Razorfen Kraul
-    ["Aggem Thorncurse"] = true, -- Razorfen Kraul
-    ["Death Speaker Jargba"] = true, -- Razorfen Kraul
-    ["Overlord Ramtusk"] = true, -- Razorfen Kraul
-    ["Agathelos the Raging"] = true, -- Razorfen Kraul
-    ["Blind Hunter"] = true, -- Razorfen Kraul
-    ["Charlga Razorflank"] = true, -- Razorfen Kraul
+    ["roogug"] = true, -- Razorfen Kraul
+    ["aggem thorncurse"] = true, -- Razorfen Kraul
+    ["death speaker jargba"] = true, -- Razorfen Kraul
+    ["overlord ramtusk"] = true, -- Razorfen Kraul
+    ["agathelos the raging"] = true, -- Razorfen Kraul
+    ["blind hunter"] = true, -- Razorfen Kraul
+    ["charlga razorflank"] = true, -- Razorfen Kraul
 	
     -- The Crescent Grove
-    ["Grovetender Engryss"] = true, -- The Crescent Grove
-    ["Keeper Ranathos"] = true, -- The Crescent Grove
-    ["High Priestess A'lathea"] = true, -- The Crescent Grove
-    ["Fenektis the Deceiver"] = true, -- The Crescent Grove
-    ["Master Raxxieth"] = true, -- The Crescent Grove
+    ["grovetender engryss"] = true, -- The Crescent Grove
+    ["keeper ranathos"] = true, -- The Crescent Grove
+    ["high priestess a'lathea"] = true, -- The Crescent Grove
+    ["fenektis the deceiver"] = true, -- The Crescent Grove
+    ["master raxxieth"] = true, -- The Crescent Grove
 
     -- Scarlet Monastery
-    ["Interrogator Vishas"] = true, -- Scarlet Monastery
-    ["Bloodmage Thalnos"] = true, -- Scarlet Monastery
-    ["Houndmaster Loksey"] = true, -- Scarlet Monastery
-    ["Arcanist Doan"] = true, -- Scarlet Monastery
-    ["Herod"] = true, -- Scarlet Monastery
-    ["High Inquisitor Fairbanks"] = true, -- Scarlet Monastery
-    ["Scarlet Commander Mograine"] = true, -- Scarlet Monastery
-    ["High Inquisitor Whitemane"] = true, -- Scarlet Monastery
+    ["interrogator vishas"] = true, -- Scarlet Monastery
+    ["bloodmage thalnos"] = true, -- Scarlet Monastery
+    ["houndmaster loksey"] = true, -- Scarlet Monastery
+    ["arcanist doan"] = true, -- Scarlet Monastery
+    ["herod"] = true, -- Scarlet Monastery
+    ["high inquisitor fairbanks"] = true, -- Scarlet Monastery
+    ["scarlet commander mograine"] = true, -- Scarlet Monastery
+    ["high inquisitor whitemane"] = true, -- Scarlet Monastery
 
     -- Razorfen Downs
-    ["Tuten'kash"] = true, -- Razorfen Downs
-    ["Mordresh Fire Eye"] = true, -- Razorfen Downs
-    ["Glutton"] = true, -- Razorfen Downs
-    ["Ragglesnout"] = true, -- Razorfen Downs
-    ["Amnennar the Coldbringer"] = true, -- Razorfen Downs
+    ["tuten'kash"] = true, -- Razorfen Downs
+    ["mordresh fire eye"] = true, -- Razorfen Downs
+    ["glutton"] = true, -- Razorfen Downs
+    ["ragglesnout"] = true, -- Razorfen Downs
+    ["amnennar the coldbringer"] = true, -- Razorfen Downs
 	
 	-- Uldaman
-    ["Revelosh"] = true, -- Uldaman
-    ["Ironaya"] = true, -- Uldaman
-    ["Obsidian Sentinel"] = true, -- Uldaman
-    ["Ancient Stone Keeper"] = true, -- Uldaman
-    ["Galgann Firehammer"] = true, -- Uldaman
-    ["Grimlok"] = true, -- Uldaman
-    ["Archaedas"] = true, -- Uldaman
+    ["revelosh"] = true, -- Uldaman
+    ["ironaya"] = true, -- Uldaman
+    ["obsidian sentinel"] = true, -- Uldaman
+    ["ancient stone keeper"] = true, -- Uldaman
+    ["galgann firehammer"] = true, -- Uldaman
+    ["grimlok"] = true, -- Uldaman
+    ["archaedas"] = true, -- Uldaman
 	
 	-- Gilneas City
-    ["Matthias Holtz"] = true, -- Gilneas City
-    ["Packmaster Ragetooth"] = true, -- Gilneas City
-    ["Judge Sutherland"] = true, -- Gilneas City
-    ["Dustivan Blackcowl"] = true, -- Gilneas City
-    ["Marshal Magnus Greystone"] = true, -- Gilneas City
-    ["Horsemaster Levvin"] = true, -- Gilneas City
-    ["Genn Greymane"] = true, -- Gilneas City
+    ["matthias holtz"] = true, -- Gilneas City
+    ["packmaster ragetooth"] = true, -- Gilneas City
+    ["judge sutherland"] = true, -- Gilneas City
+    ["dustivan blackcowl"] = true, -- Gilneas City
+    ["marshal magnus greystone"] = true, -- Gilneas City
+    ["horsemaster levvin"] = true, -- Gilneas City
+    ["genn greymane"] = true, -- Gilneas City
 
 
     -- Zul'Farrak
-    ["Antu'sul"] = true, -- Zul'Farrak
-    ["Theka the Martyr"] = true, -- Zul'Farrak
-    ["Witch Doctor Zum'rah"] = true, -- Zul'Farrak
-    ["Nekrum Gutchewer"] = true, -- Zul'Farrak
-    ["Shadowpriest Sezz'ziz"] = true, -- Zul'Farrak
-    ["Chief Ukorz Sandscalp"] = true, -- Zul'Farrak
-    ["Gahz'rilla"] = true, -- Zul'Farrak
-    ["Hydromancer Velratha"] = true, -- Zul'Farrak
-    ["Sergeant Bly"] = true, -- Zul'Farrak
+    ["antu'sul"] = true, -- Zul'Farrak
+    ["theka the martyr"] = true, -- Zul'Farrak
+    ["witch doctor zum'rah"] = true, -- Zul'Farrak
+    ["nekrum gutchewer"] = true, -- Zul'Farrak
+    ["shadowpriest sezz'ziz"] = true, -- Zul'Farrak
+    ["chief ukorz sandscalp"] = true, -- Zul'Farrak
+    ["gahz'rilla"] = true, -- Zul'Farrak
+    ["hydromancer velratha"] = true, -- Zul'Farrak
+    ["sergeant bly"] = true, -- Zul'Farrak
 
     -- Maraudon
-    ["Noxxion"] = true, -- Maraudon
-    ["Razorlash"] = true, -- Maraudon
-    ["Tinkerer Gizlock"] = true, -- Maraudon
-    ["Lord Vyletongue"] = true, -- Maraudon
-    ["Celebras the Cursed"] = true, -- Maraudon
-    ["Landslide"] = true, -- Maraudon
-    ["Rotgrip"] = true, -- Maraudon
-    ["Princess Theradras"] = true, -- Maraudon
+    ["noxxion"] = true, -- Maraudon
+    ["razorlash"] = true, -- Maraudon
+    ["tinkerer gizlock"] = true, -- Maraudon
+    ["lord vyletongue"] = true, -- Maraudon
+    ["celebras the cursed"] = true, -- Maraudon
+    ["landslide"] = true, -- Maraudon
+    ["rotgrip"] = true, -- Maraudon
+    ["princess theradras"] = true, -- Maraudon
 
     -- Temple of Atal'Hakkar (Sunken Temple)
-    ["Avatar of Hakkar"] = true, -- Temple of Atal'Hakkar
-    ["Jammal'an the Prophet"] = true, -- Temple of Atal'Hakkar
-    ["Morphaz"] = true, -- Temple of Atal'Hakkar
-    ["Hazzas"] = true, -- Temple of Atal'Hakkar
-    ["Shade of Eranikus"] = true, -- Temple of Atal'Hakkar
+    ["avatar of hakkar"] = true, -- Temple of Atal'Hakkar
+    ["jammal'an the prophet"] = true, -- Temple of Atal'Hakkar
+    ["morphaz"] = true, -- Temple of Atal'Hakkar
+    ["hazzas"] = true, -- Temple of Atal'Hakkar
+    ["shade of eranikus"] = true, -- Temple of Atal'Hakkar
 	
     -- Hateforge Quarry
-    ["High Foreman Bargul Blackhammer"] = true, -- Hateforge Quarry
-    ["Engineer Figgles"] = true, -- Hateforge Quarry
-    ["Corrosis"] = true, -- Hateforge Quarry
-    ["Hatereaver Annihilator"] = true, -- Hateforge Quarry
-    ["Hargesh Doomcaller"] = true, -- Hateforge Quarry
+    ["high foreman bargul blackhammer"] = true, -- Hateforge Quarry
+    ["engineer figgles"] = true, -- Hateforge Quarry
+    ["corrosis"] = true, -- Hateforge Quarry
+    ["hatereaver annihilator"] = true, -- Hateforge Quarry
+    ["hargesh doomcaller"] = true, -- Hateforge Quarry
 	
     -- Karazhan Crypt
-    ["Marrowspike"] = true, -- Karazhan Crypt
-    ["Hivaxxis"] = true, -- Karazhan Crypt
-    ["Corpsemuncher"] = true, -- Karazhan Crypt
-    ["Guard Captain Gort"] = true, -- Karazhan Crypt
-    ["Archlich Enkhraz"] = true, -- Karazhan Crypt
-    ["Commander Andreon"] = true, -- Karazhan Crypt
-    ["Alarus"] = true, -- Karazhan Crypt
+    ["marrowspike"] = true, -- Karazhan Crypt
+    ["hivaxxis"] = true, -- Karazhan Crypt
+    ["corpsemuncher"] = true, -- Karazhan Crypt
+    ["guard captain gort"] = true, -- Karazhan Crypt
+    ["archlich enkhraz"] = true, -- Karazhan Crypt
+    ["commander andreon"] = true, -- Karazhan Crypt
+    ["alarus"] = true, -- Karazhan Crypt
 	
     -- Caverns of Time: Black Morass
-    ["Chronar"] = true, -- Black Morass
-    ["Epidamu"] = true, -- Black Morass
-    ["Drifting Avatar of Time"] = true, -- Black Morass
-    ["Time-Lord Epochronos"] = true, -- Black Morass
-    ["Mossheart"] = true, -- Black Morass
-    ["Rotmaw"] = true, -- Black Morass
-    ["Antnormi"] = true, -- Black Morass
+    ["chronar"] = true, -- Black Morass
+    ["epidamu"] = true, -- Black Morass
+    ["drifting avatar of time"] = true, -- Black Morass
+    ["time-lord epochronos"] = true, -- Black Morass
+    ["mossheart"] = true, -- Black Morass
+    ["rotmaw"] = true, -- Black Morass
+    ["antnormi"] = true, -- Black Morass
 
     -- Blackrock Depths
-    ["High Interrogator Gerstahn"] = true, -- Blackrock Depths
-    ["Lord Roccor"] = true, -- Blackrock Depths
-    ["Houndmaster Grebmar"] = true, -- Blackrock Depths
-    ["Pyromancer Loregrain"] = true, -- Blackrock Depths
-    ["Lord Incendius"] = true, -- Blackrock Depths
-    ["Fineous Darkvire"] = true, -- Blackrock Depths
-    ["Bael'Gar"] = true, -- Blackrock Depths
-    ["General Angerforge"] = true, -- Blackrock Depths
-    ["Golem Lord Argelmach"] = true, -- Blackrock Depths
-    ["Hurley Blackbreath"] = true, -- Blackrock Depths
-    ["Phalanx"] = true, -- Blackrock Depths
-    ["Ambassador Flamelash"] = true, -- Blackrock Depths
-    ["Magmus"] = true, -- Blackrock Depths
-    ["Emperor Dagran Thaurissan"] = true, -- Blackrock Depths
+    ["high interrogator gerstahn"] = true, -- Blackrock Depths
+    ["lord roccor"] = true, -- Blackrock Depths
+    ["houndmaster grebmar"] = true, -- Blackrock Depths
+    ["pyromancer loregrain"] = true, -- Blackrock Depths
+    ["lord incendius"] = true, -- Blackrock Depths
+    ["fineous darkvire"] = true, -- Blackrock Depths
+    ["bael'gar"] = true, -- Blackrock Depths
+    ["general angerforge"] = true, -- Blackrock Depths
+    ["golem lord argelmach"] = true, -- Blackrock Depths
+    ["hurley blackbreath"] = true, -- Blackrock Depths
+    ["phalanx"] = true, -- Blackrock Depths
+    ["ambassador flamelash"] = true, -- Blackrock Depths
+    ["magmus"] = true, -- Blackrock Depths
+    ["emperor dagran thaurissan"] = true, -- Blackrock Depths
 
     -- Lower Blackrock Spire
-    ["Highlord Omokk"] = true, -- Lower Blackrock Spire
-    ["Shadow Hunter Vosh'gajin"] = true, -- Lower Blackrock Spire
-    ["War Master Voone"] = true, -- Lower Blackrock Spire
-    ["Mother Smolderweb"] = true, -- Lower Blackrock Spire
-    ["Quartermaster Zigris"] = true, -- Lower Blackrock Spire
-    ["Halycon"] = true, -- Lower Blackrock Spire
-    ["Gizrul the Slavener"] = true, -- Lower Blackrock Spire
-    ["Overlord Wyrmthalak"] = true, -- Lower Blackrock Spire
+    ["highlord omokk"] = true, -- Lower Blackrock Spire
+    ["shadow hunter vosh'gajin"] = true, -- Lower Blackrock Spire
+    ["war master voone"] = true, -- Lower Blackrock Spire
+    ["mother smolderweb"] = true, -- Lower Blackrock Spire
+    ["quartermaster zigris"] = true, -- Lower Blackrock Spire
+    ["halycon"] = true, -- Lower Blackrock Spire
+    ["gizrul the slavener"] = true, -- Lower Blackrock Spire
+    ["overlord wyrmthalak"] = true, -- Lower Blackrock Spire
 
     -- Upper Blackrock Spire
-    ["Pyroguard Emberseer"] = true, -- Upper Blackrock Spire
-    ["Solakar Flamewreath"] = true, -- Upper Blackrock Spire
-    ["Jed Runewatcher"] = true, -- Upper Blackrock Spire
-    ["Goraluk Anvilcrack"] = true, -- Upper Blackrock Spire
-    ["Warchief Rend Blackhand"] = true, -- Upper Blackrock Spire
-    ["The Beast"] = true, -- Upper Blackrock Spire
-    ["General Drakkisath"] = true, -- Upper Blackrock Spire
+    ["pyroguard emberseer"] = true, -- Upper Blackrock Spire
+    ["solakar flamewreath"] = true, -- Upper Blackrock Spire
+    ["jed runewatcher"] = true, -- Upper Blackrock Spire
+    ["goraluk anvilcrack"] = true, -- Upper Blackrock Spire
+    ["warchief rend blackhand"] = true, -- Upper Blackrock Spire
+    ["the beast"] = true, -- Upper Blackrock Spire
+    ["general drakkisath"] = true, -- Upper Blackrock Spire
 
     -- Dire Maul
-    ["Zevrim Thornhoof"] = true, -- Dire Maul
-    ["Hydrospawn"] = true, -- Dire Maul
-    ["Lethtendris"] = true, -- Dire Maul
-    ["Alzzin the Wildshaper"] = true, -- Dire Maul
-    ["Tendris Warpwood"] = true, -- Dire Maul
-    ["Illyanna Ravenoak"] = true, -- Dire Maul
-    ["Magister Kalendris"] = true, -- Dire Maul
-    ["Immol'thar"] = true, -- Dire Maul
-    ["Prince Tortheldrin"] = true, -- Dire Maul
+    ["zevrim thornhoof"] = true, -- Dire Maul
+    ["hydrospawn"] = true, -- Dire Maul
+    ["lethtendris"] = true, -- Dire Maul
+    ["alzzin the wildshaper"] = true, -- Dire Maul
+    ["tendris warpwood"] = true, -- Dire Maul
+    ["illyanna ravenoak"] = true, -- Dire Maul
+    ["magister kalendris"] = true, -- Dire Maul
+    ["immol'thar"] = true, -- Dire Maul
+    ["prince tortheldrin"] = true, -- Dire Maul
 
     -- Stratholme
-    ["Hearthsinger Forresten"] = true, -- Stratholme
-    ["Timmy the Cruel"] = true, -- Stratholme
-    ["Malor the Zealous"] = true, -- Stratholme
-    ["Cannon Master Willey"] = true, -- Stratholme
-    ["Archivist Galford"] = true, -- Stratholme
-    ["Balnazzar"] = true, -- Stratholme
-    ["Baroness Anastari"] = true, -- Stratholme
-    ["Nerub'enkan"] = true, -- Stratholme
-    ["Maleki the Pallid"] = true, -- Stratholme
-    ["Ramstein the Gorger"] = true, -- Stratholme
-    ["Lord Aurius Rivendare"] = true, -- Stratholme
+    ["hearthsinger forresten"] = true, -- Stratholme
+    ["timmy the cruel"] = true, -- Stratholme
+    ["malor the zealous"] = true, -- Stratholme
+    ["cannon master willey"] = true, -- Stratholme
+    ["archivist galford"] = true, -- Stratholme
+    ["balnazzar"] = true, -- Stratholme
+    ["baroness anastari"] = true, -- Stratholme
+    ["nerub'enkan"] = true, -- Stratholme
+    ["maleki the pallid"] = true, -- Stratholme
+    ["ramstein the gorger"] = true, -- Stratholme
+    ["lord aurius rivendare"] = true, -- Stratholme
 
     -- Scholomance
-    ["Kirtonos the Herald"] = true, -- Scholomance
-    ["Jandice Barov"] = true, -- Scholomance
-    ["Rattlegore"] = true, -- Scholomance
-    ["Vectus"] = true, -- Scholomance
-    ["Ras Frostwhisper"] = true, -- Scholomance
-    ["Darkmaster Gandling"] = true, -- Scholomance
+    ["kirtonos the herald"] = true, -- Scholomance
+    ["jandice barov"] = true, -- Scholomance
+    ["rattlegore"] = true, -- Scholomance
+    ["vectus"] = true, -- Scholomance
+    ["ras frostwhisper"] = true, -- Scholomance
+    ["darkmaster gandling"] = true, -- Scholomance
 	
 	    -- Molten Core
-    ["Lucifron"] = true, -- Molten Core
-    ["Magmadar"] = true, -- Molten Core
-    ["Gehennas"] = true, -- Molten Core
-    ["Garr"] = true, -- Molten Core
-    ["Shazzrah"] = true, -- Molten Core
-    ["Baron Geddon"] = true, -- Molten Core
-    ["Sulfuron Harbinger"] = true, -- Molten Core
-    ["Golemagg the Incinerator"] = true, -- Molten Core
-    ["Majordomo Executus"] = true, -- Molten Core
-    ["Ragnaros"] = true, -- Molten Core
+    ["lucifron"] = true, -- Molten Core
+    ["magmadar"] = true, -- Molten Core
+    ["gehennas"] = true, -- Molten Core
+    ["garr"] = true, -- Molten Core
+    ["shazzrah"] = true, -- Molten Core
+    ["baron geddon"] = true, -- Molten Core
+    ["sulfuron harbinger"] = true, -- Molten Core
+    ["golemagg the incinerator"] = true, -- Molten Core
+    ["majordomo executus"] = true, -- Molten Core
+    ["ragnaros"] = true, -- Molten Core
 
     -- Onyxia's Lair
-    ["Onyxia"] = true, -- Onyxia's Lair
+    ["onyxia"] = true, -- Onyxia's Lair
 
     -- Blackwing Lair
-    ["Razorgore the Untamed"] = true, -- Blackwing Lair
-    ["Vaelastrasz the Corrupt"] = true, -- Blackwing Lair
-    ["Broodlord Lashlayer"] = true, -- Blackwing Lair
-    ["Firemaw"] = true, -- Blackwing Lair
-    ["Ebonroc"] = true, -- Blackwing Lair
-    ["Flamegor"] = true, -- Blackwing Lair
-    ["Chromaggus"] = true, -- Blackwing Lair
-    ["Nefarian"] = true, -- Blackwing Lair
+    ["razorgore the untamed"] = true, -- Blackwing Lair
+    ["vaelastrasz the corrupt"] = true, -- Blackwing Lair
+    ["broodlord lashlayer"] = true, -- Blackwing Lair
+    ["firemaw"] = true, -- Blackwing Lair
+    ["ebonroc"] = true, -- Blackwing Lair
+    ["flamegor"] = true, -- Blackwing Lair
+    ["chromaggus"] = true, -- Blackwing Lair
+    ["nefarian"] = true, -- Blackwing Lair
 
     -- Zul'Gurub
-    ["High Priestess Jeklik"] = true, -- Zul'Gurub
-    ["High Priest Venoxis"] = true, -- Zul'Gurub
-    ["High Priestess Mar'li"] = true, -- Zul'Gurub
-    ["Bloodlord Mandokir"] = true, -- Zul'Gurub
-    ["Gahz'ranka"] = true, -- Zul'Gurub
-    ["High Priest Thekal"] = true, -- Zul'Gurub
-    ["High Priestess Arlokk"] = true, -- Zul'Gurub
-    ["Jin'do the Hexxer"] = true, -- Zul'Gurub
-    ["Hakkar the Soulflayer"] = true, -- Zul'Gurub
+    ["high priestess jeklik"] = true, -- Zul'Gurub
+    ["high priest venoxis"] = true, -- Zul'Gurub
+    ["high priestess mar'li"] = true, -- Zul'Gurub
+    ["bloodlord mandokir"] = true, -- Zul'Gurub
+    ["gahz'ranka"] = true, -- Zul'Gurub
+    ["high priest thekal"] = true, -- Zul'Gurub
+    ["high priestess arlokk"] = true, -- Zul'Gurub
+    ["jin'do the hexxer"] = true, -- Zul'Gurub
+    ["hakkar the soulflayer"] = true, -- Zul'Gurub
 
     -- Ruins of Ahn'Qiraj
-    ["Kurinnaxx"] = true, -- Ruins of Ahn'Qiraj
-    ["General Rajaxx"] = true, -- Ruins of Ahn'Qiraj
-    ["Moam"] = true, -- Ruins of Ahn'Qiraj
-    ["Buru the Gorger"] = true, -- Ruins of Ahn'Qiraj
-    ["Ayamiss the Hunter"] = true, -- Ruins of Ahn'Qiraj
-    ["Ossirian the Unscarred"] = true, -- Ruins of Ahn'Qiraj
+    ["kurinnaxx"] = true, -- Ruins of Ahn'Qiraj
+    ["general rajaxx"] = true, -- Ruins of Ahn'Qiraj
+    ["moam"] = true, -- Ruins of Ahn'Qiraj
+    ["buru the gorger"] = true, -- Ruins of Ahn'Qiraj
+    ["ayamiss the hunter"] = true, -- Ruins of Ahn'Qiraj
+    ["ossirian the unscarred"] = true, -- Ruins of Ahn'Qiraj
 
     -- Temple of Ahn'Qiraj
-    ["The Prophet Skeram"] = true, -- Temple of Ahn'Qiraj
-    ["Lord Kri"] = true, -- Temple of Ahn'Qiraj
-    ["Princess Yauj"] = true, -- Temple of Ahn'Qiraj
-    ["Vem"] = true, -- Temple of Ahn'Qiraj
-    ["Battleguard Sartura"] = true, -- Temple of Ahn'Qiraj
-    ["Fankriss the Unyielding"] = true, -- Temple of Ahn'Qiraj
-    ["Viscidus"] = true, -- Temple of Ahn'Qiraj
-    ["Princess Huhuran"] = true, -- Temple of Ahn'Qiraj
-    ["Emperor Vek'lor"] = true, -- Temple of Ahn'Qiraj
-    ["Emperor Vek'nilash"] = true, -- Temple of Ahn'Qiraj
-    ["Ouro"] = true, -- Temple of Ahn'Qiraj
-    ["C'Thun"] = true, -- Temple of Ahn'Qiraj
+    ["the prophet skeram"] = true, -- Temple of Ahn'Qiraj
+    ["lord kri"] = true, -- Temple of Ahn'Qiraj
+    ["princess yauj"] = true, -- Temple of Ahn'Qiraj
+    ["vem"] = true, -- Temple of Ahn'Qiraj
+    ["battleguard sartura"] = true, -- Temple of Ahn'Qiraj
+    ["fankriss the unyielding"] = true, -- Temple of Ahn'Qiraj
+    ["viscidus"] = true, -- Temple of Ahn'Qiraj
+    ["princess huhuran"] = true, -- Temple of Ahn'Qiraj
+    ["emperor vek'lor"] = true, -- Temple of Ahn'Qiraj
+    ["emperor vek'nilash"] = true, -- Temple of Ahn'Qiraj
+    ["ouro"] = true, -- Temple of Ahn'Qiraj
+    ["c'thun"] = true, -- Temple of Ahn'Qiraj
 
     -- Naxxramas
-    ["Anub'Rekhan"] = true, -- Naxxramas
-    ["Grand Widow Faerlina"] = true, -- Naxxramas
-    ["Maexxna"] = true, -- Naxxramas
-    ["Noth the Plaguebringer"] = true, -- Naxxramas
-    ["Heigan the Unclean"] = true, -- Naxxramas
-    ["Loatheb"] = true, -- Naxxramas
-    ["Instructor Razuvious"] = true, -- Naxxramas
-    ["Gothik the Harvester"] = true, -- Naxxramas
-    ["Thane Korth'azz"] = true, -- Naxxramas
-    ["Lady Blaumeux"] = true, -- Naxxramas
-    ["Sir Zeliek"] = true, -- Naxxramas
-    ["Baron Rivendare"] = true, -- Naxxramas
-    ["Patchwerk"] = true, -- Naxxramas
-    ["Grobbulus"] = true, -- Naxxramas
-    ["Gluth"] = true, -- Naxxramas
-    ["Thaddius"] = true, -- Naxxramas
-    ["Sapphiron"] = true, -- Naxxramas
-    ["Kel'Thuzad"] = true, -- Naxxramas
+    ["anub'rekhan"] = true, -- Naxxramas
+    ["grand widow faerlina"] = true, -- Naxxramas
+    ["maexxna"] = true, -- Naxxramas
+    ["noth the plaguebringer"] = true, -- Naxxramas
+    ["heigan the unclean"] = true, -- Naxxramas
+    ["loatheb"] = true, -- Naxxramas
+    ["instructor razuvious"] = true, -- Naxxramas
+    ["gothik the harvester"] = true, -- Naxxramas
+    ["thane korth'azz"] = true, -- Naxxramas
+    ["lady blaumeux"] = true, -- Naxxramas
+    ["sir zeliek"] = true, -- Naxxramas
+    ["baron rivendare"] = true, -- Naxxramas
+    ["patchwerk"] = true, -- Naxxramas
+    ["grobbulus"] = true, -- Naxxramas
+    ["gluth"] = true, -- Naxxramas
+    ["thaddius"] = true, -- Naxxramas
+    ["sapphiron"] = true, -- Naxxramas
+    ["kel'thuzad"] = true, -- Naxxramas
 
     -- Emerald Sanctum (Turtle WoW)
-    ["Erennius"] = true, -- Emerald Sanctum
-    ["Solnius"] = true, -- Emerald Sanctum
+    ["erennius"] = true, -- Emerald Sanctum
+    ["solnius"] = true, -- Emerald Sanctum
 
     -- Lower Karazhan Halls (Turtle WoW)
-	["Master Blacksmith Rolfen"] = true, -- Lower Karazhan Halls
-	["Brood Queen Araxxna"] = true, -- Lower Karazhan Halls
-	["Grizikil"] = true, -- Lower Karazhan Halls
-	["Clawlord Howlfang"] = true, -- Lower Karazhan Halls
-	["Lord Blackwald II"] = true, -- Lower Karazhan Halls
-    ["Moroes"] = true, -- Lower Karazhan Halls
+    ["master blacksmith rolfen"] = true, -- Lower Karazhan Halls
+	["brood queen araxxna"] = true, -- Lower Karazhan Halls
+	["grizikil"] = true, -- Lower Karazhan Halls
+	["clawlord howlfang"] = true, -- Lower Karazhan Halls
+	["lord blackwald ii"] = true, -- Lower Karazhan Halls
+    ["moroes"] = true, -- Lower Karazhan Halls
 }
-
 function BossKillTracker:OnInitialize()
-    -- Initialize saved variables
     if not BossKillTrackerDB then
         BossKillTrackerDB = {}
     end
     db = BossKillTrackerDB
 
-    -- Ensure a default structure exists for saved data
     if not db.records then
         db.records = {}
     end
 
-    -- Register slash commands
     self:RegisterChatCommand({"/tbk", "/TotalBossKill"}, function(input)
         self:HandleKillCountQuery(input)
     end)
 end
 
 function BossKillTracker:OnEnable()
-    -- Register events
-    self:RegisterEvent("ENCOUNTER_END")
-    self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-    self:RegisterEvent("PLAYER_TARGET_CHANGED")
+    self:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH")
+    self:RegisterEvent("CHAT_MSG_COMBAT_SELF_HITS")
 end
 
-function BossKillTracker:ENCOUNTER_END(encounterID, name, _, _, success)
-    if success == 1 then
-        self:LogKill(encounterID, name)
+function BossKillTracker:CHAT_MSG_COMBAT_HOSTILE_DEATH(msg)
+    local bossName = string.match(msg, "^(.-) dies%.$")
+    bossName = self:normalize(bossName)
+    if bossName and trackedBosses[bossName] then
+        self:LogKill(nil, bossName)
     end
 end
 
-function BossKillTracker:COMBAT_LOG_EVENT_UNFILTERED(_, event, _, _, _, _, _, destGUID, destName)
-    if event == "UNIT_DIED" and destName and trackedBosses[destName] then
-        self:LogKill(nil, destName)
-    end
-end
-
-function BossKillTracker:PLAYER_TARGET_CHANGED()
-    local targetName = UnitName("target")
-    if not targetName or not trackedBosses[targetName] then return end
-
-    -- Check if the target is dead and the kill has already been logged
-    if UnitIsDead("target") and activeEncounters[targetName] then return end
-
-    -- If the target is dead and not logged, log the kill
-    if UnitIsDead("target") then
-        self:LogKill(nil, targetName)
+function BossKillTracker:CHAT_MSG_COMBAT_SELF_HITS(msg)
+    local bossName = string.match(msg, "^You have slain (.-)!$")
+    bossName = self:normalize(bossName)
+    if bossName and trackedBosses[bossName] then
+        self:LogKill(nil, bossName)
     end
 end
 
 function BossKillTracker:LogKill(encounterID, name)
-    if not name then return end
-
-    -- Deduplicate using activeEncounters
-    if activeEncounters[name] then return end
-
-    -- Mark this encounter as logged
-    activeEncounters[name] = true
-
-    -- Initialize the record for the boss if it doesn't exist
-    if not db.records[name] then
-        db.records[name] = {
-            name = name,
-            killCount = 0
-        }
+    name = self:normalize(name)
+    if type(db.records[name]) ~= "number" then
+        db.records[name] = 0
     end
-
-    -- Increment the kill count
-    db.records[name].killCount = db.records[name].killCount + 1
-
-    -- Log to chat
-    self:SendMessageToChat(name, db.records[name].killCount)
-end
-
-function BossKillTracker:SendMessageToChat(name, killCount)
-    -- Print kill count to the chat window
-    DEFAULT_CHAT_FRAME:AddMessage(string.format("%s: %d kills.", name, killCount), 1.0, 1.0, 0.0)
+    db.records[name] = db.records[name] + 1
+    local currentKills = db.records[name]
+    self:Print(string.format("%s slain! %d kills", self:capitalizeWords(name), currentKills))
 end
 
 function BossKillTracker:HandleKillCountQuery(input)
-    -- Trim and validate the input
-    local bossName = input and strtrim(input)
-    if not bossName or bossName == "" then
-        DEFAULT_CHAT_FRAME:AddMessage("Please specify a boss name.", 1.0, 0.0, 0.0)
+    local bossName = self:trim(input)
+    bossName = self:normalize(bossName)
+
+    if bossName == "" then
+        self:Print("Usage: /tbk <Boss Name>")
         return
     end
 
-    -- Check if the boss is tracked
     if not trackedBosses[bossName] then
-        DEFAULT_CHAT_FRAME:AddMessage(string.format("%s is not a recognized boss name.", bossName), 1.0, 0.0, 0.0)
+        self:Print(string.format("'%s' is not a tracked boss.", bossName))
         return
     end
 
-    -- Fetch the kill count
-    local record = db.records[bossName]
-    local killCount = record and record.killCount or 0
-    DEFAULT_CHAT_FRAME:AddMessage(string.format("%s: %d kills.", bossName, killCount), 0.0, 1.0, 0.0)
+    local count = tonumber(db.records[bossName]) or 0
+    local displayName = self:capitalizeWords(bossName)
+    self:Print(string.format("You have killed %s %d time(s).", displayName, count))
 end
+
+function BossKillTracker:trim(s)
+    if type(s) ~= "string" then
+        return ""
+    end
+    return string.gsub(s, "^%s*(.-)%s*$", "%1")
+end
+
+function BossKillTracker:normalize(name)
+    if type(name) ~= "string" then
+        return ""
+    end
+    return string.lower(self:trim(name))
+end
+
+function BossKillTracker:capitalizeWords(name)
+    -- Ensure the input is a valid string
+    if type(name) ~= "string" or name == "" then
+        return "Unknown" -- Fallback for invalid or empty inputs
+    end
+
+    -- Split the name manually and capitalize each word
+    local words = {}
+    for word in string.gfind(name, "[^%s]+") do -- Use string.gfind for WoW 1.12 compatibility
+        local first = string.sub(word, 1, 1)
+        local rest = string.sub(word, 2)
+        local capitalized = (first and string.upper(first) or "") .. (rest and string.lower(rest) or "")
+        table.insert(words, capitalized)
+    end
+
+    -- Rejoin the words into a single string
+    return table.concat(words, " ")
+end
+
