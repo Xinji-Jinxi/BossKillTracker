@@ -2,6 +2,7 @@ local BossKillTracker = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceConso
 
 -- Localized database table
 local db
+
 -- Table of manually tracked bosses for older content
 local trackedBosses = {
     -- Ragefire Chasm
@@ -320,14 +321,16 @@ local trackedBosses = {
     ["solnius"] = true, -- Emerald Sanctum
 
     -- Lower Karazhan Halls (Turtle WoW)
-    ["master blacksmith rolfen"] = true, -- Lower Karazhan Halls
-	["brood queen araxxna"] = true, -- Lower Karazhan Halls
-	["grizikil"] = true, -- Lower Karazhan Halls
-	["clawlord howlfang"] = true, -- Lower Karazhan Halls
-	["lord blackwald ii"] = true, -- Lower Karazhan Halls
+    ["master blacksmith rolfen"] = true, -- Lower Karazhan Hall
+    ["brood queen araxxna"] = true, -- Lower Karazhan Halls
+    ["grizikil"] = true, -- Lower Karazhan Halls
+    ["clawlord howlfang"] = true, -- Lower Karazhan Halls
+    ["lord blackwald ii"] = true, -- Lower Karazhan Halls
     ["moroes"] = true, -- Lower Karazhan Halls
 }
+
 function BossKillTracker:OnInitialize()
+    -- Initialize persistent database
     if not BossKillTrackerDB then
         BossKillTrackerDB = {}
     end
@@ -337,6 +340,7 @@ function BossKillTracker:OnInitialize()
         db.records = {}
     end
 
+    -- Register slash commands
     self:RegisterChatCommand({"/tbk", "/TotalBossKill"}, function(input)
         self:HandleKillCountQuery(input)
     end)
@@ -407,21 +411,24 @@ function BossKillTracker:normalize(name)
 end
 
 function BossKillTracker:capitalizeWords(name)
-    -- Ensure the input is a valid string
     if type(name) ~= "string" or name == "" then
-        return "Unknown" -- Fallback for invalid or empty inputs
+        return "Unknown" -- Fallback for invalid or empty names
     end
 
-    -- Split the name manually and capitalize each word
+    -- Words to keep lowercase
+    local exceptions = { ["the"] = true }
+
+    -- Process each word in the string safely
     local words = {}
-    for word in string.gfind(name, "[^%s]+") do -- Use string.gfind for WoW 1.12 compatibility
-        local first = string.sub(word, 1, 1)
-        local rest = string.sub(word, 2)
-        local capitalized = (first and string.upper(first) or "") .. (rest and string.lower(rest) or "")
-        table.insert(words, capitalized)
+    for word in string.gfind(name, "[^%s]+") do 
+        if word and exceptions[string.lower(word)] then
+            table.insert(words, string.lower(word)) -- Keep exception words lowercase
+        else
+            local first = string.sub(word, 1, 1) or ""
+            local rest = string.sub(word, 2) or ""
+            table.insert(words, string.upper(first) .. string.lower(rest))
+        end
     end
 
-    -- Rejoin the words into a single string
     return table.concat(words, " ")
 end
-
