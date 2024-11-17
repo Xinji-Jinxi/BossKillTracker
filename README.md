@@ -29,6 +29,7 @@ If no input is provided or the boss name is unrecognized, an error message will 
 All tracked bosses are predefined and include all major dungeon, raid, and custom bosses.
 
 # Installation
-- Extract the addon to your WoW Interface/AddOns/ directory.
+- Extract the addon to your WoW "Interface/AddOns/" directory.
+- Remove the '-main' part from the folder name.
 - Enable the addon in the game’s AddOns menu.
 - Reload your UI or restart the game to begin tracking!
