@@ -1,0 +1,12 @@
+## Interface: 100105
+## Title: Boss Kill Tracker
+## Notes: Tracks the number of times dungeon and raid bosses have been killed.
+## Author: Jinxi
+## Version: 1.0.0
+## SavedVariables: BossKillTrackerDB
+
+libs/AceLibrary/AceLibrary.lua
+libs/AceAddon-2.0/AceAddon-2.0.lua
+libs/AceEvent-2.0/AceEvent-2.0.lua
+
+BossKillTracker.lua
