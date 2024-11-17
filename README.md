@@ -1,7 +1,7 @@
 # Boss Kill Tracker
 
 # Overview
-The Boss Kill Tracker addon allows players to track the number of times they’ve killed specific dungeon and raid bosses in World of Warcraft. It supports all classic and Turtle WoW bosses, maintaining records across gaming sessions.
+The Boss Kill Tracker addon allows players to track the number of times they’ve killed specific dungeon and raid bosses in World of Warcraft. It supports all classic and Turtle WoW dungeon and raid bosses. World bosses have unfortunately not been included. This may be included at a later date if there is a significant demand for it.
 
 # Features
 - Tracks kill counts for bosses in dungeons, raids, and custom content.
@@ -10,19 +10,9 @@ The Boss Kill Tracker addon allows players to track the number of times they’v
 
 # In-Game Commands
 
-Kill Count Query
-* /tbk <Boss Name>
-* /TotalBossKill <Boss Name>
-
-# Description:
-Displays the total number of times the specified boss has been killed.
-
-# Examples:
-'/tbk Ragnaros'<br>
-Output: Ragnaros: 5 kills.
-
-'/tbk InvalidBossName'<br>
-Output: InvalidBossName is not a recognized boss name.
+The following in-game command displays the total number of times the specified boss has been killed.
+* /tbk < Boss Name >
+* /TotalBossKill < Boss Name >
 
 # Notes
 If no input is provided or the boss name is unrecognized, an error message will be displayed.
