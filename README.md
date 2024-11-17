@@ -18,10 +18,10 @@ Kill Count Query
 Displays the total number of times the specified boss has been killed.
 
 # Examples:
-/tbk Ragnaros
+'/tbk Ragnaros'
 Output: Ragnaros: 5 kills.
 
-/tbk InvalidBossName
+'/tbk InvalidBossName'
 Output: InvalidBossName is not a recognized boss name.
 
 # Notes
